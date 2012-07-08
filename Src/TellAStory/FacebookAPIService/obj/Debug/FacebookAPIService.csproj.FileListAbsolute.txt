@@ -1,8 +1,0 @@
-E:\DEV\GitRep\TellAStory\bin\$(Debug)\FacebookAPIService.dll.config
-E:\DEV\GitRep\TellAStory\bin\$(Debug)\FacebookAPIService.dll
-E:\DEV\GitRep\TellAStory\bin\$(Debug)\FacebookAPIService.pdb
-E:\DEV\GitRep\TellAStory\Src\TellAStory\FacebookAPIService\obj\Debug\FacebookAPIService.dll
-E:\DEV\GitRep\TellAStory\Src\TellAStory\FacebookAPIService\obj\Debug\FacebookAPIService.pdb
-E:\DEV\GitRep\TellAStory\bin\Debug\FacebookAPIService.dll.config
-E:\DEV\GitRep\TellAStory\bin\Debug\FacebookAPIService.dll
-E:\DEV\GitRep\TellAStory\bin\Debug\FacebookAPIService.pdb
