@@ -5,31 +5,194 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 namespace TellAStoryServiceLib
 {
-    // kobig - should handle thread safety in all functions
     // kobig - should catch exceptions
-    // kobig - should throw normal exceptions
+    // kobig - should throw proper exceptions
 
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in both code and config file together.
     public class StupidStorageService : IStorageService
     {
         private static string mBasePath = @"C:\temp\TellAStoryStorage";
 
-        #region IStorageService Members        
+        #region synchronization objects
+
+        // Create/Delete sources locks
+        private System.Object lockBinary = new System.Object();
+        private System.Object lockText = new System.Object();
+
+        // Read/Write (single) source locks
+        private class ReadWriteSyncObjectsStruct
+        {
+            public int readersCounter = 0; // Counts the number of active readers
+            public int writersCounter = 0; // Counts the number of active writers
+
+            public Object lockReadersCounter = new Object(); // Used for locking the readers counter
+            public Object lockWritersCounter = new Object(); // Used for locking the writers counter
+
+            public Semaphore semaphoreReadersAccess = new Semaphore(1, 1); // Used for synching the readers access to the resource
+            public Semaphore semaphoreWritersAccess = new Semaphore(1, 1); // Used for synching the writers access to the resource
+
+            public Object lockWrapReaders = new Object(); // Used for locking part of the readers actions (for priority requirements)
+        }
+
+        // Holds all locking objects for all resources
+        Dictionary<int, ReadWriteSyncObjectsStruct> ReadWriteSyncObjectsMap = new Dictionary<int, ReadWriteSyncObjectsStruct>();
+
+        #endregion
+
+        #region IStorageService Members
 
         public int CreateBinaryResource()
         {
-            return CreateResource(true);
+            int ans = 0;
+            lock (lockBinary)
+            {
+                ans = CreateResource(true);
+            }
+
+            ReadWriteSyncObjectsMap.Add(ans, new ReadWriteSyncObjectsStruct());
+
+            return ans;
         }
 
         public int CreateTextResource()
         {
-            return CreateResource(false);
+            int ans = 0;
+            lock (lockText)
+            {
+                ans = CreateResource(false);
+            }
+
+            ReadWriteSyncObjectsMap.Add(ans, new ReadWriteSyncObjectsStruct());
+
+            return ans;
         }
 
         public byte[] ReadBinaryResource(int id)
+        {
+            byte[] ans = null;
+            DoBeforeReadResource(id);
+            ans = ReadBinaryResourceImp(id);
+            DoAfterReadResource(id);
+
+            return ans;
+        }        
+
+        public string ReadTextResource(int id)
+        {
+            string ans = null;
+            DoBeforeReadResource(id);
+            ans = ReadTextResourceImp(id);
+            DoAfterReadResource(id);
+
+            return ans;
+        }        
+
+        public void WriteBinaryResource(int id, byte[] toWrite)
+        {
+            DoBeforeWriteResource(id);
+            WriteBinaryResourceImp(id, toWrite);
+            DoAfterWriteResource(id);
+        }
+        
+        public void WriteTextResource(int id, string toWrite)
+        {
+            DoBeforeWriteResource(id);
+            WriteTextResourceImp(id, toWrite);
+            DoAfterWriteResource(id);
+        }        
+
+        public void AppendTextResource(int id, string toWrite)
+        {
+            DoBeforeWriteResource(id);
+            AppendTextResourceImp(id, toWrite);
+            DoAfterWriteResource(id);
+        }
+        
+        public void ClearTextResource(int id)
+        {
+            WriteTextResource(id, string.Empty);
+        }
+
+        public void DeleteBinaryResource(int id)
+        {
+            lock (lockBinary)
+            {
+                // kobig - Cannot implemet properly with current method of having a file with the last id. Need a better method, like holding a linked list of all ids
+                // kobig - The implementation has to include sync as a writer
+                // kobig - What happens if somone wants to read and waits for me while someone else deletes the resource ???? We should throw a proper exception
+
+
+
+                throw new NotImplementedException();
+            }
+
+            ReadWriteSyncObjectsMap.Remove(id);
+        }
+
+        public void DeleteTextResource(int id)
+        {
+            lock (lockText)
+            {
+                // kobig - Cannot implemet properly with current method of having a file with the last id. Need a better method, like holding a linked list of all ids
+                // kobig - The implementation has to include sync as a writer
+                // kobig - What happens if somone wants to read and waits for me while someone else deletes the resource ???? We should throw a proper exception
+
+
+                throw new NotImplementedException();
+            }
+
+            // kobig - think if the access to this object should be synched - it is a general question related to services
+            ReadWriteSyncObjectsMap.Remove(id);
+        }
+
+        #endregion
+
+        #region Private Read/Write implementation methods
+
+        private string ReadTextResourceImp(int id)
+        {
+            string filePath = CalcFilePath(id, false);
+            if (!File.Exists(filePath))
+                throw new Exception("Wrong ID");
+
+            string ans = null;
+            using (StreamReader rd = new StreamReader(filePath))
+            {
+                ans = rd.ReadToEnd();
+            }
+
+            return ans;
+        }        
+
+        private void WriteTextResourceImp(int id, string toWrite)
+        {
+            string filePath = CalcFilePath(id, false);
+            if (!File.Exists(filePath))
+                throw new Exception("Wrong ID");
+
+            using (StreamWriter wr = new StreamWriter(filePath))
+            {
+                wr.Write(toWrite);
+            }
+        }
+
+        private void AppendTextResourceImp(int id, string toWrite)
+        {
+            string filePath = CalcFilePath(id, false);
+            if (!File.Exists(filePath))
+                throw new Exception("Wrong ID");
+
+            using (StreamWriter wr = File.AppendText(filePath))
+            {
+                wr.Write(toWrite);
+            }
+        }
+
+        private byte[] ReadBinaryResourceImp(int id)
         {
             string filePath = CalcFilePath(id, true);
             if (!File.Exists(filePath))
@@ -48,22 +211,7 @@ namespace TellAStoryServiceLib
             return ans;
         }
 
-        public string ReadTextResource(int id)
-        {
-            string filePath = CalcFilePath(id, false);
-            if (!File.Exists(filePath))
-                throw new Exception("Wrong ID");
-
-            string ans = null;
-            using (StreamReader rd = new StreamReader(filePath))
-            {
-                ans = rd.ReadToEnd();
-            }
-
-            return ans;
-        }
-
-        public void WriteBinaryResource(int id, byte[] toWrite)
+        private void WriteBinaryResourceImp(int id, byte[] toWrite)
         {
             string filePath = CalcFilePath(id, true);
             if (!File.Exists(filePath))
@@ -76,52 +224,71 @@ namespace TellAStoryServiceLib
                     wr.Write(toWrite);
                 }
             }
-        }
+        }        
 
-        public void WriteTextResource(int id, string toWrite)
+        #endregion
+
+        #region Private Sync methods
+
+        // Sync Read/Write methods
+        private void DoBeforeReadResource(int id)
         {
-            string filePath = CalcFilePath(id, false);
-            if (!File.Exists(filePath))
-                throw new Exception("Wrong ID");
-
-            using (StreamWriter wr = new StreamWriter(filePath))
+            ReadWriteSyncObjectsStruct syncObjectsStruct = ReadWriteSyncObjectsMap[id];
+            lock (syncObjectsStruct.lockWrapReaders)
             {
-                wr.Write(toWrite);
+                syncObjectsStruct.semaphoreReadersAccess.WaitOne();
+
+                lock (syncObjectsStruct.lockReadersCounter)
+                {
+                    syncObjectsStruct.readersCounter++;
+                    if (syncObjectsStruct.readersCounter == 1)
+                        syncObjectsStruct.semaphoreWritersAccess.WaitOne();
+                }
+
+                syncObjectsStruct.semaphoreReadersAccess.Release();
             }
         }
 
-        public void AppendTextResource(int id, string toWrite)
+        private void DoAfterReadResource(int id)
         {
-            string filePath = CalcFilePath(id, false);
-            if (!File.Exists(filePath))
-                throw new Exception("Wrong ID");
-
-            using (StreamWriter wr = File.AppendText(filePath))
-            {                
-                wr.Write(toWrite);
+            ReadWriteSyncObjectsStruct syncObjectsStruct = ReadWriteSyncObjectsMap[id];
+            lock (syncObjectsStruct.lockReadersCounter)
+            {
+                syncObjectsStruct.readersCounter--;
+                if (syncObjectsStruct.readersCounter == 0)
+                    syncObjectsStruct.semaphoreWritersAccess.Release();
             }
         }
 
-        public void ClearTextResource(int id)
+        private void DoBeforeWriteResource(int id)
         {
-            WriteTextResource(id, string.Empty);
+            ReadWriteSyncObjectsStruct syncObjectsStruct = ReadWriteSyncObjectsMap[id];
+            lock (syncObjectsStruct.lockWritersCounter)
+            {
+                syncObjectsStruct.writersCounter++;
+                if (syncObjectsStruct.writersCounter == 1)
+                    syncObjectsStruct.semaphoreReadersAccess.WaitOne();
+            }
+
+            syncObjectsStruct.semaphoreWritersAccess.WaitOne();
         }
 
-        public void DeleteBinaryResource(int id)
+        private void DoAfterWriteResource(int id)
         {
-            // kobig - Cannot implemet properly with current method of having a file with the last id. Need a better method, like holding a linked list of all ids
-            throw new NotImplementedException();
-        }
+            ReadWriteSyncObjectsStruct syncObjectsStruct = ReadWriteSyncObjectsMap[id];
+            syncObjectsStruct.semaphoreWritersAccess.Release();
 
-        public void DeleteTextResource(int id)
-        {
-            // kobig - Cannot implemet properly with current method of having a file with the last id. Need a better method, like holding a linked list of all ids
-            throw new NotImplementedException();
+            lock (syncObjectsStruct.lockWritersCounter)
+            {
+                syncObjectsStruct.writersCounter--;
+                if (syncObjectsStruct.writersCounter == 0)
+                    syncObjectsStruct.semaphoreReadersAccess.Release();
+            }
         }
 
         #endregion
 
-        #region Private Methods
+        #region Private Util Methods
 
         public int CreateResource(bool binary)
         {
@@ -181,8 +348,9 @@ namespace TellAStoryServiceLib
             }
 
             return ans;
-        }
+        }        
 
         #endregion
+        
     }
 }
