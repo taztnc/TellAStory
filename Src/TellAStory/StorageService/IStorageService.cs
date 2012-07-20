@@ -12,39 +12,29 @@ namespace TellAStoryServiceLib
     [ServiceContract]
     public interface IStorageService
     {
-        // Create
-        [OperationContract]
-        int CreateBinaryResource();
-
-        [OperationContract]
-        int CreateTextResource();
-
         // Read
         [OperationContract]
-        byte[] ReadBinaryResource(int id);
+        byte[] ReadBinaryResource(string id);
 
         [OperationContract]
-        string ReadTextResource(int id);
+        string ReadTextResource(string id);
 
         // Write
         [OperationContract]
-        void WriteBinaryResource(int id, byte[] toWrite);
+        void WriteBinaryResource(string id, byte[] toWrite);
 
         [OperationContract]
-        void WriteTextResource(int id, string toWrite);
+        void WriteTextResource(string id, string toWrite);
 
         [OperationContract]
-        void AppendTextResource(int id, string toWrite);
+        void AppendTextResource(string id, string toWrite);
                 
         // Clear
         [OperationContract]
-        void ClearTextResource(int id);
+        void ClearTextResource(string id);
 
         // Delete
         [OperationContract]
-        void DeleteBinaryResource(int id);
-
-        [OperationContract]
-        void DeleteTextResource(int id);
+        void DeleteResource(string id);
     }   
 }
