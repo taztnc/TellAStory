@@ -7,7 +7,7 @@ using System.Text;
 using System.Collections;
 using System.IO;
 
-namespace TellAStoryServiceLib
+namespace StorageService
 {
     [ServiceContract]
     public interface IStorageService

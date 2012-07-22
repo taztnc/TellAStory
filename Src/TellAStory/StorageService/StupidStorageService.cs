@@ -7,7 +7,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 
-namespace TellAStoryServiceLib
+namespace StorageService
 {
     // kobig - should catch exceptions
     // kobig - should throw proper exceptions
