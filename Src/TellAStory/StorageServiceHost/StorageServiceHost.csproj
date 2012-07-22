@@ -8,8 +8,8 @@
     <ProjectGuid>{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hosts</RootNamespace>
-    <AssemblyName>Hosts</AssemblyName>
+    <RootNamespace>StorageServiceHost</RootNamespace>
+    <AssemblyName>StorageServiceHost</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

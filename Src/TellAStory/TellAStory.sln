@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogBookService", "LogBookSe
 		{18D719A8-C329-47CE-91D5-20A808E83C3E} = {18D719A8-C329-47CE-91D5-20A808E83C3E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosts", "Hosts\Hosts.csproj", "{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageServiceHost", "StorageServiceHost\StorageServiceHost.csproj", "{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
