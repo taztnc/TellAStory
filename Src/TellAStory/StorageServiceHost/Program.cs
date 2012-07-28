@@ -18,7 +18,6 @@ namespace Hosts
             {
                 storageServiceHost = StartStorageService();
                 facebookAPIServiceHost = StartFacebookAPIService();
-
                 Console.WriteLine();
                 Console.WriteLine("Press 'F1' to exit");
                 while (Console.ReadKey().Key != ConsoleKey.F1) ;

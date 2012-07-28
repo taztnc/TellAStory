@@ -11,30 +11,28 @@ namespace LogBookService
     public class LogBookService : ILogBookService
     {
         #region ILogBookService Members
-        StorageServiceClient proxy = new StorageServiceClient();
 
         public void CreateLog(string id)
         {
+            var proxy = new StorageServiceClient();
             proxy.WriteTextResource(LogID2ResourceID(id), string.Empty);
         }
 
         public void WriteLogLine(string id, string line)
         {
-            proxy.AppendTextResource(
-                LogID2ResourceID(id), 
-                string.Format("{0} : {1}{2}", 
-                DateTime.Now.ToString(),
-                line, 
-                Environment.NewLine));
+            var proxy = new StorageServiceClient();
+            proxy.AppendTextResource(LogID2ResourceID(id), string.Format("{0}{1}", line, Environment.NewLine));
         }
 
         public void ClearLog(string id)
         {
+            var proxy = new StorageServiceClient();
             proxy.WriteTextResource(LogID2ResourceID(id), string.Empty);
         }
 
         public void DeleteLog(string id)
         {
+            var proxy = new StorageServiceClient();
             proxy.DeleteResource(LogID2ResourceID(id));
         }
 
