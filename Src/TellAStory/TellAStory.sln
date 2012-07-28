@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogBookService", "LogBookSe
 		{18D719A8-C329-47CE-91D5-20A808E83C3E} = {18D719A8-C329-47CE-91D5-20A808E83C3E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageServiceHost", "StorageServiceHost\StorageServiceHost.csproj", "{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreServicesHost", "StorageServiceHost\CoreServicesHost.csproj", "{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{533DAFCE-CD50-488B-B4B6-734F250492D7}"
 EndProject
