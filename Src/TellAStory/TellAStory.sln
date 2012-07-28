@@ -12,6 +12,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogBookService", "LogBookSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageServiceHost", "StorageServiceHost\StorageServiceHost.csproj", "{C918AC52-8398-4B09-9F86-D2CBEC74DB1B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{533DAFCE-CD50-488B-B4B6-734F250492D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{C68D085C-1E48-4077-84D9-065C16ECCC64}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engines", "Engines", "{6D9CD88C-8ADA-41B8-A0B2-401049FB26E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manager", "Manager", "{1E79755D-01A2-4F98-83E4-18C3EA16C351}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,5 +73,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{18D719A8-C329-47CE-91D5-20A808E83C3E} = {533DAFCE-CD50-488B-B4B6-734F250492D7}
+		{3CD20035-73EA-43C6-B089-5676D793AF52} = {533DAFCE-CD50-488B-B4B6-734F250492D7}
+		{C918AC52-8398-4B09-9F86-D2CBEC74DB1B} = {533DAFCE-CD50-488B-B4B6-734F250492D7}
+		{0788FEAF-623B-4524-9B5F-9022F0D99DAE} = {C68D085C-1E48-4077-84D9-065C16ECCC64}
 	EndGlobalSection
 EndGlobal
